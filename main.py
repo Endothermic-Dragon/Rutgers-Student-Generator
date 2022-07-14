@@ -1,13 +1,24 @@
+# Used to randomize list
 import random
 
+# Store all the student names
 names = []
+
+# Store the "maps" from student-to-student
 maps = {}
+
+# Specify the number of students per group
 studentsPerGroup = 5
+
+# Number of shuffle iterations to run
 iterations = 10000
 
+# Fetch the list of student names
 with open("student_list.txt", "r") as f:
     names = f.read().split("\n")
 
+# Fetch the list of groups, subdivide and store relations in map
+# Not exactly optimal algorithm, but serves the purpose
 with open("groups.txt", "r") as f:
     for i in f.read().split("\n\n"):
         namesList = tuple(i.split("\n"))
@@ -20,12 +31,12 @@ with open("groups.txt", "r") as f:
         temp.remove(i)
         maps[i] = temp
 
-
-del temp, namesList, f, i, j
-
+# Set the min score to be inifinity so it's replaced at the first iteration
 minScore = float("inf")
+# Whenever smaller min is achieved, save to list
 minList = []
 
+# Shuffle a bunch of times, calculate "score" (# of people who've sat with each other before)
 for i in range(iterations):
     namesCopy = names.copy()
 
@@ -40,13 +51,15 @@ for i in range(iterations):
         for j in i:
             score += sum(el in maps[j] for el in i)
     
-    if score/2 < minScore:
-        minScore = score/2
+    if score < minScore:
+        minScore = score
         minList = namesCopy
 
+# Print out output
 print("")
 print(f"Common relations: {minScore}\n")
 
+# Generate data string to save to file
 jointString = []
 
 for i in range(len(minList)):
@@ -61,5 +74,6 @@ for i in range(len(minList)):
 jointString = "\n\n".join(["\n".join(jointString[i:i + studentsPerGroup]) \
         for i in range(0, len(jointString), studentsPerGroup)])
 
+# Save to file
 with open("output_2.txt", "w") as f:
     f.write(jointString)
