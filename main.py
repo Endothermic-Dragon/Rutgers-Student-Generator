@@ -11,7 +11,7 @@ maps = {}
 studentsPerGroup = 5
 
 # Number of shuffle iterations to run
-iterations = 10000
+iterations = 1000
 
 # Fetch the list of student names
 with open("student_list.txt", "r") as f:
@@ -22,12 +22,12 @@ with open("student_list.txt", "r") as f:
 with open("groups.txt", "r") as f:
     for i in f.read().split("\n\n"):
         namesList = tuple(i.split("\n"))
-        for i in namesList:
-            if i not in maps:
-                maps[i] = []
-            maps[i].append(namesList)
+        for j in namesList:
+            if j not in maps:
+                maps[j] = []
+            maps[j].extend(namesList)
     for i, j in maps.items():
-        temp = list(set(j[0]))
+        temp = list(set(j))
         temp.remove(i)
         maps[i] = temp
 
@@ -75,5 +75,5 @@ jointString = "\n\n".join(["\n".join(jointString[i:i + studentsPerGroup]) \
         for i in range(0, len(jointString), studentsPerGroup)])
 
 # Save to file
-with open("output_2.txt", "w") as f:
+with open("output_1.txt", "w") as f:
     f.write(jointString)
